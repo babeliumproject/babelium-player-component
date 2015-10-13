@@ -1,5 +1,7 @@
 package com.babeliumproject.player.controls
 {
+	import com.babeliumproject.player.ResourceData;
+	
 	import flash.display.GradientType;
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -72,7 +74,7 @@ package com.babeliumproject.player.controls
 			_localeAwareErrorMessage=value;
 			localeAwareErrorMessageChanged=true;
 			
-			var msg:String=ResourceManager.getInstance().getString('myResources',_localeAwareErrorMessage);
+			var msg:String=ResourceManager.getInstance().getString(ResourceData.PLAYER_RESOURCES,_localeAwareErrorMessage);
 			message = msg ? msg : message;
 			
 			updateDisplayList(0, 0);

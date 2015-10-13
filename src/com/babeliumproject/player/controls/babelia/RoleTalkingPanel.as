@@ -65,7 +65,7 @@ package com.babeliumproject.player.controls.babelia
 			
 			_textBox=new TextField();
 			_textBox.selectable = false;
-			//_cw=LocaleUtils.localizedPropertyBind(_textBox,'text','myResources','ROLE_CURRENTLY_TALKING');
+			//_cw=LocaleUtils.localizedPropertyBind(_textBox,'text',ResourceData.PLAYER_RESOURCES,'ROLE_CURRENTLY_TALKING');
 			_textBox.setTextFormat(_textFormat);
 			
 			addChild(_textBox);

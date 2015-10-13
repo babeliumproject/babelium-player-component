@@ -10,12 +10,13 @@
 	<fx:Script>
 
 		<![CDATA[
+			import com.babeliumproject.player.ResourceData;
 			import com.babeliumproject.player.UserDeviceManager;
 			import com.babeliumproject.player.assets.PlayerIcons;
 			import com.babeliumproject.player.events.UserDeviceEvent;
-			
+
 			import flash.utils.getQualifiedClassName;
-			
+
 			import mx.events.CloseEvent;
 			import mx.graphics.BitmapScaleMode;
 			import mx.resources.IResourceManager;
@@ -53,6 +54,7 @@
 			private function internalDisplayState(state:int):void
 			{
 				var rm:IResourceManager=ResourceManager.getInstance();
+				updateVectorialIcon(confirmimage, PlayerIcons.headphones6_icon, 96, 96);
 				switch (state)
 				{
 					case UserDeviceEvent.NO_CAMERA_FOUND:
@@ -60,8 +62,8 @@
 						errorlayer.visible=true;
 						confirmimage.visible=false;
 						//bitmap.source="/resources/images/iconmonstr-webcam-3-icon-48.png";
-						drawNoticeIcon(PlayerIcons.webcam3_icon, 32, 32);
-						msg.text=rm.getString('myResources', 'WEBCAM_NOT_FOUND') + ". " + rm.getString('myResources', 'PLEASE_TRY_AGAIN_TO_PROCEED') + ".";
+						updateVectorialIcon(noticeIcon, PlayerIcons.webcam3_icon, 32, 32);
+						msg.text=rm.getString(ResourceData.PLAYER_RESOURCES, 'WEBCAM_NOT_FOUND') + ". " + rm.getString(ResourceData.PLAYER_RESOURCES, 'PLEASE_TRY_AGAIN_TO_PROCEED') + ".";
 						exp.visible=false;
 						retrybtn.includeInLayout=true;
 						retrybtn.visible=true;
@@ -73,8 +75,8 @@
 						errorlayer.visible=true;
 						confirmimage.visible=false;
 						//bitmap.source="/resources/images/iconmonstr-microphone-3-icon-48.png";
-						drawNoticeIcon(PlayerIcons.microphone3_icon, 32, 32);
-						msg.text=ResourceManager.getInstance().getString('myResources', 'MICROPHONE_NOT_FOUND') + ". " + rm.getString('myResources', 'PLEASE_TRY_AGAIN_TO_PROCEED') + ".";
+						updateVectorialIcon(noticeIcon, PlayerIcons.microphone3_icon, 32, 32);
+						msg.text=ResourceManager.getInstance().getString(ResourceData.PLAYER_RESOURCES, 'MICROPHONE_NOT_FOUND') + ". " + rm.getString(ResourceData.PLAYER_RESOURCES, 'PLEASE_TRY_AGAIN_TO_PROCEED') + ".";
 						exp.visible=false;
 						retrybtn.includeInLayout=true;
 						retrybtn.visible=true;
@@ -86,10 +88,10 @@
 						errorlayer.visible=true;
 						confirmimage.visible=false;
 						//bitmap.source="/resources/images/iconmonstr-warning-5-icon-48.png";
-						drawNoticeIcon(PlayerIcons.warning5_icon, 32, 32);
-						msg.text=ResourceManager.getInstance().getString('myResources', 'DEVICES_NOT_YET_ACTIVATED') + ". " + rm.getString('myResources', 'PLEASE_TRY_AGAIN_TO_PROCEED') + ".";
+						updateVectorialIcon(noticeIcon, PlayerIcons.warning5_icon, 32, 32);
+						msg.text=ResourceManager.getInstance().getString(ResourceData.PLAYER_RESOURCES, 'DEVICES_NOT_YET_ACTIVATED') + ". " + rm.getString(ResourceData.PLAYER_RESOURCES, 'PLEASE_TRY_AGAIN_TO_PROCEED') + ".";
 						exp.visible=true;
-						exp.text=rm.getString('myResources','SELECT_ALLOW');
+						exp.text=rm.getString(ResourceData.PLAYER_RESOURCES, 'SELECT_ALLOW');
 						retrybtn.includeInLayout=true;
 						retrybtn.visible=true;
 						ignorebtn.includeInLayout=true;
@@ -100,15 +102,15 @@
 						errorlayer.visible=false;
 						confirmimage.visible=true;
 						exp.visible=true;
-						exp.text=rm.getString('myResources','NOW_CLICK_REMEMBER_AND_THEN_CLOSE');
+						exp.text=rm.getString(ResourceData.PLAYER_RESOURCES, 'NOW_CLICK_REMEMBER_AND_THEN_CLOSE');
 						break;
 					default:
 						_devicesUnlocked=false;
 						errorlayer.visible=true;
 						confirmimage.visible=false;
 						//bitmap.source="/resources/images/iconmonstr-error-5-icon-48.png";
-						drawNoticeIcon(PlayerIcons.error5_icon, 32, 32);
-						msg.text=ResourceManager.getInstance().getString('myResources', 'DEVICES_DISABLED_BY_ADMIN') + ".";
+						updateVectorialIcon(noticeIcon, PlayerIcons.error5_icon, 32, 32);
+						msg.text=ResourceManager.getInstance().getString(ResourceData.PLAYER_RESOURCES, 'DEVICES_DISABLED_BY_ADMIN') + ".";
 						exp.visible=false;
 						retrybtn.includeInLayout=false;
 						retrybtn.visible=false;
@@ -117,35 +119,38 @@
 						break;
 				}
 			}
-			
-			protected function drawNoticeIcon(icon:Object, width:Number, height:Number):void{
-				if(icon == null || getQualifiedClassName(icon.constructor) != "Object")
+
+			protected function updateVectorialIcon(graphic:Graphic, icon:Object, width:Number, height:Number):void
+			{
+				if (icon == null || getQualifiedClassName(icon.constructor) != "Object")
 					return;
-				if(!icon.hasOwnProperty('height') || !icon.hasOwnProperty('width') || !icon.hasOwnProperty('path') || !icon.hasOwnProperty('color'))
+				if (!icon.hasOwnProperty('height') || !icon.hasOwnProperty('width') || !icon.hasOwnProperty('path') || !icon.hasOwnProperty('color'))
 					return;
-				
-				var scaleH:Number=height/icon.height;
-				var scaleW:Number=width/icon.width;
-				var scaleC:Number=scaleH<scaleW ? scaleH : scaleW;
-				
-				var path:*=noticeIcon.getElementAt(0) as Path;
-				if(path){
+
+				var scaleH:Number=height / icon.height;
+				var scaleW:Number=width / icon.width;
+				var scaleC:Number=scaleH < scaleW ? scaleH : scaleW;
+
+				var path:*=graphic.getElementAt(0) as Path;
+				if (path)
+				{
 					path.data=icon.path;
-					var fill:* = path.fill as SolidColor;
-					if(fill){
+					var fill:*=path.fill as SolidColor;
+					if (fill)
+					{
 						fill.color=icon.color;
 					}
 				}
-				
-				noticeIcon.width=icon.width*scaleC;
-				noticeIcon.height=icon.height*scaleC;
+
+				graphic.width=icon.width * scaleC;
+				graphic.height=icon.height * scaleC;
 			}
 		]]>
 	</fx:Script>
 
 	<s:Label id="exp"
 			 textAlign="center"
-			 text="{resourceManager.getString('myResources', 'SELECT_ALLOW')}"
+			 text="{resourceManager.getString(ResourceData.PLAYER_RESOURCES, 'SELECT_ALLOW')}"
 			 visible="false"
 			 width="{this.width * .85}"
 			 x="{this.width/2 - exp.width/2}"
@@ -177,41 +182,36 @@
 				</s:fill>
 			</s:Path>
 		</s:Graphic>
-		<!--
-		<s:BitmapImage id="bitmap"
-					   height="32"
-					   width="32"
-					   smooth="true"
-					   source="/resources/images/iconmonstr-microphone-3-icon-48.png"/>
-		-->
 		<s:Label id="msg"
 				 width="100%"
 				 fontSize="12"
-				 text="{resourceManager.getString('myResources','MICROPHONE_NOT_FOUND')}"
+				 text="{resourceManager.getString(ResourceData.PLAYER_RESOURCES,'MICROPHONE_NOT_FOUND')}"
 				 textAlign="center"/>
 		<s:HGroup width="100%"
 				  height="100%"
 				  horizontalAlign="center"
 				  verticalAlign="bottom">
 			<s:Button id="retrybtn"
-					  label="{resourceManager.getString('myResources','TRY_AGAIN')}"
+					  label="{resourceManager.getString(ResourceData.PLAYER_RESOURCES,'TRY_AGAIN')}"
 					  click="retryButtonClickHandler(event)"
 					  fontSize="12"
 					  buttonMode="true"/>
 
 			<s:Button id="ignorebtn"
-					  label="{resourceManager.getString('myResources','CANCEL')}"
+					  label="{resourceManager.getString(ResourceData.PLAYER_RESOURCES,'CANCEL')}"
 					  click="cancelButtonClickHandler(event)"
 					  fontSize="12"
 					  buttonMode="true"/>
 		</s:HGroup>
 	</s:BorderContainer>
-	<s:BitmapImage id="confirmimage"
-				   height="96"
-				   width="96"
-				   smooth="true"
-				   source="/resources/images/iconmonstr-headphones-6-icon-128.png"
-				   visible="false"
-				   y="{(this.height-confirmimage.height)/2}"
-				   x="{(this.width-confirmimage.width)/2}"/>
+	<s:Graphic id="confirmimage"
+			   visible="false"
+			   y="{(this.height-confirmimage.height)/2}"
+			   x="{(this.width-confirmimage.width)/2}">
+		<s:Path>
+			<s:fill>
+				<s:SolidColor/>
+			</s:fill>
+		</s:Path>
+	</s:Graphic>
 </s:TitleWindow>

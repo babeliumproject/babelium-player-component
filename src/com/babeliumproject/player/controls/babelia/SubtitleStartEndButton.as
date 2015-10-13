@@ -1,10 +1,11 @@
 package com.babeliumproject.player.controls.babelia
 {
-	import flash.display.Sprite;
-	import flash.events.MouseEvent;
-	
+	import com.babeliumproject.player.ResourceData;
 	import com.babeliumproject.player.controls.DictionarySkinnableButton;
 	import com.babeliumproject.player.events.babelia.SubtitlingEvent;
+	
+	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	
 	public class SubtitleStartEndButton extends DictionarySkinnableButton
 	{
@@ -59,14 +60,14 @@ package com.babeliumproject.player.controls.babelia
 				CreateStartButton();
 				btn.x = this.width/2 - btn.width/2;
 				btn.y = this.height/2 - btn.height/2;
-				this.toolTip = resourceManager.getString('myResources','SUBTITLE_START_TIME_TOOLTIP');
+				this.toolTip = resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SUBTITLE_START_TIME_TOOLTIP');
 			}
 			else
 			{
 				CreateEndButton();
 				btn.x = this.width/2 - btn.width/2;
 				btn.y = this.height/2 - btn.height/2;
-				this.toolTip = resourceManager.getString('myResources','SUBTITLE_STOP_TIME_TOOLTIP');
+				this.toolTip = resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SUBTITLE_STOP_TIME_TOOLTIP');
 			}
 			addChild(btn);
 		}

@@ -1,13 +1,14 @@
 package com.babeliumproject.player.controls.babelia
 {
+	import com.babeliumproject.player.ResourceData;
+	import com.babeliumproject.player.controls.DictionarySkinnableComponent;
+	
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.media.Microphone;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.utils.Timer;
-	
-	import com.babeliumproject.player.controls.DictionarySkinnableComponent;
 	
 	import mx.resources.ResourceManager;
 	
@@ -95,10 +96,10 @@ package com.babeliumproject.player.controls.babelia
 		{
 			if(_mic.activityLevel >= 0){
 				this.setProgress(_mic.activityLevel, 100);
-				this.label = ResourceManager.getInstance().getString('myResources','MIC_INPUT_LEVEL')+":   " + _mic.activityLevel+"%";
+				this.label = ResourceManager.getInstance().getString(ResourceData.PLAYER_RESOURCES,'MIC_INPUT_LEVEL')+":   " + _mic.activityLevel+"%";
 			} else {
 				this.setProgress(0, 100);
-				this.label = ResourceManager.getInstance().getString('myResources','MIC_WAITING_FOR_INPUT');
+				this.label = ResourceManager.getInstance().getString(ResourceData.PLAYER_RESOURCES,'MIC_WAITING_FOR_INPUT');
 			}
 		}
 		

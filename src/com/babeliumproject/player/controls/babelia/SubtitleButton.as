@@ -1,14 +1,15 @@
 package com.babeliumproject.player.controls.babelia
 {
+	import com.babeliumproject.player.ResourceData;
+	import com.babeliumproject.player.controls.DictionarySkinnableComponent;
+	import com.babeliumproject.player.events.babelia.SubtitleButtonEvent;
+	
 	import flash.display.GradientType;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	
 	import spark.components.ToggleButton;
-	
-	import com.babeliumproject.player.controls.DictionarySkinnableComponent;
-	import com.babeliumproject.player.events.babelia.SubtitleButtonEvent;
 	
 	public class SubtitleButton extends DictionarySkinnableComponent
 	{
@@ -56,7 +57,7 @@ package com.babeliumproject.player.controls.babelia
 			addChild( _button );
 			
 			_button.selected = state ? true : false;
-			_button.toolTip = _button.selected ? resourceManager.getString('myResources','HIDE_SUBTITLES') : resourceManager.getString('myResources','SHOW_SUBTITLES');
+			_button.toolTip = _button.selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
 
 			_button.addEventListener(MouseEvent.CLICK, showHideSubtitles);
 
@@ -98,7 +99,7 @@ package com.babeliumproject.player.controls.babelia
 				
 				_selected = value;
 				_button.selected = _selected;
-				_button.toolTip = _selected ? resourceManager.getString('myResources','HIDE_SUBTITLES') : resourceManager.getString('myResources','SHOW_SUBTITLES');
+				_button.toolTip = _selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
 			}
 		}
 		
@@ -110,7 +111,7 @@ package com.babeliumproject.player.controls.babelia
 		
 		private function showHideSubtitles(e:MouseEvent) : void
 		{
-			_button.toolTip = _button.selected ? resourceManager.getString('myResources','HIDE_SUBTITLES') : resourceManager.getString('myResources','SHOW_SUBTITLES');
+			_button.toolTip = _button.selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
 				
 			this.dispatchEvent(new SubtitleButtonEvent(SubtitleButtonEvent.STATE_CHANGED, _button.selected));
 		}
