@@ -7,6 +7,7 @@ package com.babeliumproject.player
 {
 	import avmplus.getQualifiedClassName;
 	
+	import com.babeliumproject.player.assets.PlayerIcons;
 	import com.babeliumproject.player.controls.*;
 	import com.babeliumproject.player.controls.OverlayPlayButtonSkin;
 	import com.babeliumproject.player.controls.babelia.*;
@@ -34,6 +35,7 @@ package com.babeliumproject.player
 	import mx.effects.AnimateProperty;
 	import mx.events.CloseEvent;
 	import mx.events.EffectEvent;
+	import mx.graphics.SolidColor;
 	import mx.managers.PopUpManager;
 	import mx.resources.ResourceManager;
 	import mx.utils.ObjectUtil;
@@ -41,6 +43,8 @@ package com.babeliumproject.player
 	import spark.components.Button;
 	import spark.components.Image;
 	import spark.primitives.BitmapImage;
+	import spark.primitives.Graphic;
+	import spark.primitives.Path;
 	
 	//import vo.ResponseVO;
 
@@ -157,7 +161,7 @@ package com.babeliumproject.player
 
 		public static const SUBTILE_INSERT_DELAY:Number=0.5;
 
-		private var _micImage:Image;
+		private var _micImage:Graphic;
 		private var _overlayButton:Button;
 
 
@@ -206,12 +210,16 @@ package com.babeliumproject.player
 			_camVideo=new Video();
 			_camVideo.visible=false;
 
-			_micImage=new Image();
-
-			_micImage.source="/resources/images/player_mic_watermark.png";
-			_micImage.height=128;
-			_micImage.width=128;
-			_micImage.alpha=0.7;
+			_micImage=new Graphic();
+			var p:Path=new Path();
+			var f:SolidColor=new SolidColor();
+			p.fill=f;
+			f.color=PlayerIcons.cord_microphone_icon.color;
+			p.data=PlayerIcons.cord_microphone_icon.path;
+			_micImage.addElement(p);
+	
+			_micImage.height=PlayerIcons.cord_microphone_icon.height;
+			_micImage.width=PlayerIcons.cord_microphone_icon.width;
 			_micImage.visible=false;
 
 			_subtitleStartEnd=new SubtitleStartEndButton();
