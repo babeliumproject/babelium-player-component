@@ -93,13 +93,17 @@ package com.babeliumproject.player.media
 		}
 		
 		override public function seek(seconds:Number):void{
+			logger.debug("{0} Seek to {1} seconds. Reported video duration: {2}. Loadedfraction: {3}", [_id,seconds,duration,loadedFraction]);
 			if(!isNaN(seconds) && seconds >= 0 && seconds < duration){
-				var realseconds:Number = seconds - _startTime;
-				var reqFraction:Number = realseconds/_duration;
+				var reqSeconds:Number = seconds - _startTime;
+				var reqFraction:Number = reqSeconds/_duration;
+				
 				//The user seeked to a time that is not cached. Try to load the media file from that point onwards (Pseudo-Streaming/Apache Mod h.264)
-				if(loadedFraction < reqFraction || realseconds < 0){
-					//Set the new start time
-					_startTime = Math.abs(realseconds);
+				if(reqSeconds < 0){
+					_startTime = seconds;
+					play();
+				} else if (loadedFraction < reqFraction) {
+					_startTime = seconds;
 					play();
 				} else {
 					_ns.seek(seconds);

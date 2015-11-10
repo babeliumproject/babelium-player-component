@@ -269,20 +269,20 @@ package com.babeliumproject.player.controls
 			createBox( _scrubber, getSkinColor(SCRUBBER_COLOR), _barHeight+1, 
 				_barHeight+1, true, getSkinColor(SCRUBBERBORDER_COLOR));
 			
-			var _volAmountWidth:Number=_currentVolume*(_barWidth -_scrubber.width);
+			var volW:Number=_currentVolume*(_barWidth-_scrubber.width);
+			var _volAmountWidth:Number=Number(volW.toFixed(0));
 			var _volAmountHeight:Number=_barHeight;
 			
 			_defaultX = _sliderArea.x;
 			_defaultY = _scrubber.y = height/2 - _scrubber.height/2;
 			_scrubber.x = _sliderArea.x + _volAmountWidth; 
 			
-			trace("Bar-width: "+_barWidth+" scrubberwidht: "+_scrubber.width+" calculus: "+(_currentVolume*_barWidth)
-				+" Vol-width: "+_volAmountWidth+" currentVol: "+_currentVolume);
 			
 			createBox( _amount, getSkinColor(BAR_COLOR), _volAmountWidth, _volAmountHeight, false, 0, 0, 0.85 );
 			_amount.x = _sliderArea.x;
 			_amount.y = _sliderArea.y;
 			
+			trace("[Volume display changed] CurrentVolume: "+_currentVolume*100+"%, AmountBar: "+_volAmountWidth+"/"+_barWidth);
 		}
 		
 		private function createBG( bg:Sprite, bgWidth:Number, bgHeight:Number ):void

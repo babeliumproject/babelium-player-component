@@ -13,6 +13,7 @@ package com.babeliumproject.player.media
 	import flash.events.SecurityErrorEvent;
 	import flash.events.StatusEvent;
 	import flash.media.Camera;
+	import flash.media.H264VideoStreamSettings;
 	import flash.media.Microphone;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
@@ -88,6 +89,8 @@ package com.babeliumproject.player.media
 			_camref = camera || null;
 			var formattedStreamUrl:String = formatStreamUrl(_streamUrl);
 			logger.info("[{0}] Publish {1}. Mode: {2}", [_id,formattedStreamUrl,mode]);
+			var h264settings:H264VideoStreamSettings=new H264VideoStreamSettings();
+			_ns.videoStreamSettings=h264settings;
 			_ns.publish(formattedStreamUrl, mode);
 		}
 		
