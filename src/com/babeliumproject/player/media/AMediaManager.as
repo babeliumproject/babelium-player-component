@@ -127,7 +127,13 @@ package com.babeliumproject.player.media
 		
 		public function unpublish():void
 		{
-			
+			logger.info("[{0}] Unpublish {1}", [_id,_streamUrl]);
+			if(_ns){
+				_ns.close();
+			}
+			if(_nc){
+				_nc.close();
+			}
 		}
 		
 		public function pause():void{
@@ -371,7 +377,7 @@ package com.babeliumproject.player.media
 		}
 		
 		public function onMetaData(metaData:Object):void{
-			logger.debug("[{0}] MetaData {1}", [_id, ObjectUtil.toString(metaData)]);
+			//logger.debug("[{0}] MetaData {1}", [_id, ObjectUtil.toString(metaData)]);
 			
 			_metaData=metaData;
 			_duration=metaData.duration ? metaData.duration : _duration;

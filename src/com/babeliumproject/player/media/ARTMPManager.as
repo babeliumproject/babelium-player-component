@@ -44,6 +44,7 @@ package com.babeliumproject.player.media
 		private var _netConnectOngoingAttempt:Boolean;
 		
 		private var _deferredPause:Boolean=false;
+		private var _deferredDisconnect:Boolean=false;
 		private var _deferredSeek:Number;
 
 		public function ARTMPManager(id:String)
@@ -96,12 +97,14 @@ package com.babeliumproject.player.media
 		
 		override public function unpublish():void
 		{
-			logger.info("[{0}] Unpublish {1}", [_id,_streamUrl]);
-			if(_ns){
-				_ns.close();
+			if(!_deferredDisconnect && _ns){
+				logger.info("[{0}] Unpublish {1}", [_id,_streamUrl]);
+				_ns.dispose();
 				_ns.attachAudio(null);
 				_ns.attachCamera(null);
-				_nc.close();
+				//_nc.close();
+				_deferredDisconnect=true;		
+				
 				_camref=null;
 				_micref=null;
 			}
@@ -349,6 +352,10 @@ package com.babeliumproject.player.media
 					case "NetStream.Publish.Idle":
 						break;
 					case "NetStream.Unpublish.Success":
+						if(_deferredDisconnect){
+							_deferredDisconnect=false;
+							_nc.close();	
+						}
 						break;
 					case "NetStream.Play.Start":
 						_streamStatus=STREAM_READY;
@@ -360,6 +367,10 @@ package com.babeliumproject.player.media
 						break;
 					case "NetStream.Play.Stop":
 						_streamStatus=STREAM_STOPPED;
+						if(_deferredDisconnect){
+							_deferredDisconnect=false;
+							_nc.close();	
+						}
 						break;
 					case "NetStream.Play.Reset":
 						break;
