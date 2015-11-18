@@ -23,7 +23,7 @@ package com.babeliumproject.player.controls.babelia
 		private var _arrows:ArrayCollection;
 		private var _dataProvider:Object;
 		private var _boxWidth:Number=500;
-		private var _boxHeight:Number=50;
+		private var _boxHeight:Number=16;
 		private var _highlight:Boolean=false;
 		
 		private var selectedRoleArrow:Bitmap;
@@ -64,7 +64,7 @@ package com.babeliumproject.player.controls.babelia
 			if ( w != 0 ) width = w;
 			if ( h != 0 ) height = h;
 			
-			CreateBG(width, height);
+			//CreateBG(width, height);
 		}
 
 		public function setArrows(data:Object, duration:Number):void
@@ -113,6 +113,10 @@ package com.babeliumproject.player.controls.babelia
 			var arrow2:Sprite = new Sprite();
 			arrow2.graphics.clear();
 			arrow2.graphics.beginFill(0xa12829);
+			arrow2.graphics.lineTo(8,8);
+			arrow2.graphics.lineTo(16,0);
+			arrow2.graphics.lineTo(0,0);
+			/*
 			arrow2.graphics.moveTo(4,0);
 			arrow2.graphics.lineTo(4,26);
 			arrow2.graphics.lineTo(0,26);
@@ -121,6 +125,7 @@ package com.babeliumproject.player.controls.babelia
 			arrow2.graphics.lineTo(12,26);
 			arrow2.graphics.lineTo(12,0);
 			arrow2.graphics.lineTo(4,0);
+			*/
 			arrow2.graphics.endFill();
 			return arrow2;
 		}
@@ -146,7 +151,7 @@ package com.babeliumproject.player.controls.babelia
 			var scrubberW:int = 10;
 			
 			arrow.width = 16;
-			arrow.height = 34;
+			arrow.height = 8;
 			arrow.x = time * (width-scrubberW - margin*2) / duration + (margin + scrubberW - arrow.width/2); // -1 
 			arrow.y = 4;
 

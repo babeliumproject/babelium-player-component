@@ -29,39 +29,29 @@ package com.babeliumproject.player.controls.babelia
 		public static const BORDER_WEIGHT:String = "borderWeight";
 		
 		
-		/**
-		 * VARIABLES
-		 */
-		private var _bg:Sprite;
 		private var _button:ToggleButton;
 		private var _state:String;
-		private var _boxWidth:Number = 40;
-		private var _boxHeight:Number = 20;
 		private var _boxColor:uint = 0xFFFFFF;
-		private var _defaultHeight:Number = 20;
 		private var _selected:Boolean;
 		
 		public function SubtitleButton(state:Boolean = false)
 		{
 			super("SubtitleButton"); // Required to setup skinable component
 			
-			_bg = new Sprite();
-			addChild(_bg);
-			
 			_button = new ToggleButton();
 			_button.buttonMode = true;
-			_button.label = "SUB";
-			_button.setStyle("fontSize",8);
+			_button.label = "CC";
+			_button.setStyle("fontSize",14);
 			_button.setStyle("fontWeight", "bold");
-			_button.setStyle("cornerRadius", 4);
-			addChild( _button );
-			
+			_button.setStyle("cornerRadius", 0);
+			_button.setStyle("borderWeight",0);
+		
 			_button.selected = state ? true : false;
 			_button.toolTip = _button.selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
 
 			_button.addEventListener(MouseEvent.CLICK, showHideSubtitles);
-
-			resize(_boxWidth, _boxHeight);
+			
+			addChild( _button );
 		}
 		
 		override public function dispose():void{
@@ -79,18 +69,11 @@ package com.babeliumproject.player.controls.babelia
 			super.availableProperties([BG_COLOR]);
 		}
 		
-		public function resize(width:Number, height:Number) : void
-		{
-			this.width = width;
-			this.height = height;
+		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+			super.updateDisplayList(unscaledWidth,unscaledHeight);
 			
-			CreateBG( width, height );
-			
-			_button.width = _boxWidth - 4;
-			_button.height = _boxHeight - 4;
-			
-			_button.x = (width - _button.width) / 2;
-			_button.y = (height - _button.height) / 2;
+			_button.width=width;
+			_button.height=height;
 		}
 		
 		public function set selected(value:Boolean):void{
@@ -114,24 +97,6 @@ package com.babeliumproject.player.controls.babelia
 			_button.toolTip = _button.selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
 				
 			this.dispatchEvent(new SubtitleButtonEvent(SubtitleButtonEvent.STATE_CHANGED, _button.selected));
-		}
-		
-		private function CreateBG( bgWidth:Number, bgHeight:Number ):void
-		{
-			var matr:Matrix = new Matrix();
-			matr.createGradientBox(bgHeight, bgHeight, getSkinColor(BG_GRADIENT_ANGLE)*Math.PI/180, 0, 0);
-			
-			var colors:Array = [getSkinColor(BG_GRADIENT_START_COLOR), getSkinColor(BG_GRADIENT_END_COLOR)];
-			var alphas:Array = [getSkinColor(BG_GRADIENT_START_ALPHA), getSkinColor(BG_GRADIENT_END_ALPHA)];
-			var ratios:Array = [getSkinColor(BG_GRADIENT_START_RATIO), getSkinColor(BG_GRADIENT_END_RATIO)];
-			
-			_bg.graphics.clear();
-			_bg.graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matr);
-			if(getSkinColor(BORDER_WEIGHT) > 0)
-				_bg.graphics.lineStyle(getSkinColor(BORDER_WEIGHT),getSkinColor(BORDER_COLOR));
-			_bg.graphics.drawRect( 0, 0, bgWidth, bgHeight );
-			_bg.graphics.endFill();
-			
 		}
 	}
 }

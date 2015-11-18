@@ -1,21 +1,31 @@
 package com.babeliumproject.player.controls
 {
+	import com.babeliumproject.utils.IDisposableObject;
+	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-
+	import flash.display.GradientType;
+	import flash.display.Sprite;
+	import flash.geom.Matrix;
+	
 	import mx.core.UIComponent;
 	import mx.utils.ObjectUtil;
 
-	import com.babeliumproject.utils.IDisposableObject;
-
 	/**
-   *  The DictionarySkinnableComponent class is the base class for all dictionary-based
-		*  skinnable components. Subclasses must override the methods to add their own skin
+     *  The DictionarySkinnableComponent class is the base class for all dictionary-based
+	 *  skinnable components. Subclasses must override the methods to add their own skin
 	 *  properties to the dictionary.
 	 *
 	 */
 	public class DictionarySkinnableComponent extends UIComponent implements IDisposableObject
 	{
+		public static const BACKGROUND_COLOR:String='backgroundColor';
+		public static const BORDER_COLOR:String='borderColor';
+		public static const BORDER_WIDTH:String='borderWidth';
+		
+		
+		private var _bg:Sprite;
+		
 		private var _skinProperties:Object;
 		public var COMPONENT_NAME:String;
 
@@ -24,6 +34,9 @@ package com.babeliumproject.player.controls
 			super();
 			COMPONENT_NAME=name;
 			_skinProperties=new Object();
+			
+			_bg=new Sprite();
+			addChild(_bg);
 		}
 
 		/**
@@ -58,10 +71,68 @@ package com.babeliumproject.player.controls
 				//Suppress error
 			}
 		}
+		
+		protected function drawBackground(element:Sprite,state:String=''):void{
+			
+			var color:uint=0x000000;
+			var alpha:Number=0.0;
+			
+			if(!element) return;
+			
+			element.graphics.clear();
+			
+			var pColor:*=getSkinProperty(BACKGROUND_COLOR+state);
+			
+			if(pColor is Array){
+				var colors:Array=pColor as Array;
+				var alphas:Array=[];
+				var ratios:Array=[];
+				var angle:int=90;
+				var numColors:int = colors.length;
+				for (var i:int=0; i<numColors; i++){
+					colors[i]=new uint(colors[i]);
+					alphas.push(1.0);
+					ratios.push(Math.floor((255/(numColors-1))*i));
+				}
+				var type:String=GradientType.LINEAR;
+				var matrix:Matrix=new Matrix();
+				matrix.createGradientBox(width, height, dec2Rad(angle), 0, 0);
+				element.graphics.beginGradientFill(type, colors, alphas, ratios, matrix);
+				
+			} else if (pColor is int) {
+				color= new uint(pColor);
+				alpha=1.0;
+				element.graphics.beginFill(color,alpha);
+			} else {
+				element.graphics.beginFill(color,alpha);
+			}
+			
+			var borderWidth:int=getSkinColor(BORDER_WIDTH+state) ? getSkinColor(BORDER_WIDTH+state) : 0;
+			var availableWidth:int=width - borderWidth;
+			var availableHeight:int=height - borderWidth;
+			if(borderWidth > 0){
+				element.graphics.lineStyle(borderWidth, getSkinColor(BORDER_COLOR+state));
+			}
+				
+			element.graphics.drawRect(0, 0, availableWidth, availableHeight);
+			element.graphics.endFill();
+		}
+		
+		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+			super.updateDisplayList(unscaledWidth, unscaledHeight);
+			
+			drawBackground(_bg);
+		}
+		
+		private function dec2Rad(degrees:Number):Number{
+			return degrees * Math.PI / 180;
+		}
 
 		/**
-		 * Shows available propertys
-		 */
+		 * Prints the available style properties to the debugging log 
+		 * @param obj
+		 * 
+		 */		
 		public function availableProperties(obj:Array=null):void
 		{
 			trace(ObjectUtil.toString(obj));
@@ -70,7 +141,7 @@ package com.babeliumproject.player.controls
 		/**
 		 * Sets color for a skinProperty
 		 */
-		public function setSkinProperty(name:String, value:String):void
+		public function setSkinProperty(name:String, value:*):void
 		{
 			_skinProperties[name]=value;
 		}
@@ -92,7 +163,7 @@ package com.babeliumproject.player.controls
 		/**
 		 * Returns the value of a property of this skin
 		 */
-		public function getSkinProperty(name:String):String
+		public function getSkinProperty(name:String):*
 		{
 			if (!_skinProperties)
 				return null;
@@ -105,7 +176,6 @@ package com.babeliumproject.player.controls
 
 		public function refresh():void
 		{
-			//updateDisplayList(0,0);
 			invalidateDisplayList();
 		}
 

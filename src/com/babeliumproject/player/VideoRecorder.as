@@ -63,7 +63,6 @@ package com.babeliumproject.player
 		private var _subtitleButton:SubtitleButton;
 		private var _subtitlePanel:UIComponent;
 		private var _subtitleBox:SubtitleTextBox;
-		private var _arrowContainer:UIComponent;
 		private var _arrowPanel:ArrowPanel;
 		//private var _roleTalkingPanel:RoleTalkingPanel;
 		private var _micActivityBar:MicActivityBar;
@@ -175,32 +174,21 @@ package com.babeliumproject.player
 			_captionmgr=new CaptionManager();
 
 			_subtitleButton=new SubtitleButton();
+			_subtitleButton.height=28;
+			_subtitleButton.width=50;
 			_playerControls.addChild(_subtitleButton);
 
 			_subtitlePanel=new UIComponent();
-
 			_subtitleBox=new SubtitleTextBox();
-
 			_subtitlePanel.visible=false;
 			_subtitlePanel.addChild(_subtitleBox);
 
-			_arrowContainer=new UIComponent();
-
-			_bgArrow=new Sprite();
-
-			_arrowContainer.addChild(_bgArrow);
 			_arrowPanel=new ArrowPanel();
-			//_roleTalkingPanel=new RoleTalkingPanel();
-
-			_arrowContainer.visible=false;
-			_arrowContainer.addChild(_arrowPanel);
-			//_arrowContainer.addChild(_roleTalkingPanel);
 
 			_countdownTxtFormat=new TextFormat();
 			_countdownTxtFormat.bold=true;
 			_countdownTxtFormat.size=30;
 			_countdownTxtFormat.font="Arial";
-			
 			_countdownTxt=new TextField();
 			_countdownTxt.text="5";
 			_countdownTxt.selectable=false;
@@ -228,6 +216,7 @@ package com.babeliumproject.player
 			_playerControls.addChild(_subtitleStartEnd);
 
 			_micActivityBar=new MicActivityBar();
+			_micActivityBar.height=22;
 			_micActivityBar.visible=false;
 
 			_micCurrentGain=DEFAULT_MIC_GAIN;
@@ -250,21 +239,21 @@ package com.babeliumproject.player
 			_subtitleStartEnd.addEventListener(SubtitlingEvent.END, onSubtitlingEvent);
 			//_recStopBtn.addEventListener(RecStopButtonEvent.CLICK, onRecStopEvent);
 
-			/**
-			 * Adds components to player
-			 */
-			removeChild(_playerControls);
+			//Remove the upper layers to reorder
+			removeChild(_busyIndicator);
 			removeChild(_topLayer);
-			removeChild(_busyIndicator); // order
-
-			addChild(_micActivityBar);
-			addChild(_arrowContainer);
-
+			removeChild(_scrubBar);
+			removeChild(_playerControls);
+			
 			addChild(_micImage);
 			addChild(_camVideo);
+	
+			addChild(_micActivityBar);
+			addChild(_arrowPanel);
 
 			addChild(_subtitlePanel);
 			addChild(_playerControls);
+			addChild(_scrubBar);
 			addChild(_countdownTxt);
 			addChild(_topLayer);
 			addChild(_busyIndicator);
@@ -277,7 +266,6 @@ package com.babeliumproject.player
 			putSkinableComponent(_subtitleButton.COMPONENT_NAME, _subtitleButton);
 			putSkinableComponent(_subtitleBox.COMPONENT_NAME, _subtitleBox);
 			putSkinableComponent(_arrowPanel.COMPONENT_NAME, _arrowPanel);
-			//putSkinableComponent(_roleTalkingPanel.COMPONENT_NAME, _roleTalkingPanel);
 			putSkinableComponent(_subtitleStartEnd.COMPONENT_NAME, _subtitleStartEnd);
 			putSkinableComponent(_micActivityBar.COMPONENT_NAME, _micActivityBar);
 		}
@@ -421,14 +409,14 @@ package com.babeliumproject.player
 				return;
 
 			_arrowPanel.setArrows(timemetadata, _duration);
-			_sBar.setMarks(timemetadata, _duration);
+			_scrubBar.setMarks(timemetadata, _duration);
 		}
 
 		// remove arrows from panel
 		public function removeArrows():void
 		{
 			_arrowPanel.removeArrows();
-			_sBar.removeMarks();
+			_scrubBar.removeMarks();
 		}
 
 		// show/hide arrow panel
@@ -437,11 +425,11 @@ package com.babeliumproject.player
 			if (_state != PLAY_STATE)
 			{
 				_displayEventArrows=value;
-				_arrowContainer.visible=_displayEventArrows;
+				_arrowPanel.visible=_displayEventArrows;
 			}
 			else
 			{
-				_arrowContainer.visible=false;
+				_arrowPanel.visible=false;
 			}
 			invalidateDisplayList();
 		}
@@ -645,74 +633,58 @@ package com.babeliumproject.player
 
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
-
 			super.updateDisplayList(unscaledWidth, unscaledHeight);
-
-			_micActivityBar.width=_videoWidth;
-			_micActivityBar.height=22;
-			_micActivityBar.x=_defaultMargin;
-			_micActivityBar.refresh();
-
-			_arrowContainer.width=_playerControls.width;
-			_arrowContainer.height=50;
-			_arrowContainer.x=_defaultMargin;
-
-			var matr:Matrix=new Matrix();
-			matr.createGradientBox(_arrowContainer.height, _arrowContainer.height, 270 * Math.PI / 180, 0, 0);
-
-			var colors:Array=[0xffffff, 0xd8d8d8];
-			var alphas:Array=[1, 1];
-			var ratios:Array=[0, 255];
-
-			_bgArrow.graphics.clear();
-			_bgArrow.graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matr);
-			_bgArrow.graphics.lineStyle(1, 0xa7a7a7);
-			_bgArrow.graphics.drawRect(0, 0, _arrowContainer.width, _arrowContainer.height);
-			_bgArrow.graphics.endFill();
-
-			_subtitleButton.resize(45, 20);
-			_sBar.width=_videoWidth - _ppBtn.width - _eTime.width - _audioSlider.width - 45;
-			//_sBar.width=_videoWidth - _ppBtn.width - _stopBtn.width - _eTime.width - _audioSlider.width - 45;
-			//_sBar.width=_videoWidth - _ppBtn.width - _recStopBtn.width - _eTime.width - _audioSlider.width - 45;
-			_eTime.x=_sBar.x + _sBar.width;
-			_audioSlider.x=_eTime.x + _eTime.width;
-			_sBar.refresh();
-			_eTime.refresh();
+			
+			var additionalY:Number = _micActivityBar.visible ? _micActivityBar.height : 0;
+			
+			_playerControls.y+=additionalY;
+			_scrubBar.y+=additionalY;
+			
+			_subtitleButton.x=_playerControls.width-_subtitleButton.width;
+			_audioSlider.x=_subtitleButton.y-_audioSlider.width;
+			
 			_audioSlider.refresh();
-			_subtitleButton.x=_audioSlider.x + _audioSlider.width;
 			_subtitleButton.refresh();
 
-			// Put subtitle box at top
+			_micActivityBar.width=_videoWidth;
+			_micActivityBar.x=_defaultMargin;
+			_micActivityBar.refresh();
+			_micActivityBar.y=_scrubBar.y - _micActivityBar.height;
+			
+			if (_subtitleStartEnd.visible)
+			{
+				_subtitleButton.includeInLayout=false;
+				_subtitleButton.visible=false;
+				
+				_subtitleStartEnd.x=_ppBtn.x + _ppBtn.width;
+				_eTime.x=_subtitleStartEnd.x+_subtitleStartEnd.width;
+				_audioSlider.x=_playerControls.width-_audioSlider.width;
+			}
+			else
+			{
+				_subtitleButton.includeInLayout=true;
+				_subtitleButton.visible=true;
+				
+				_eTime.x=_ppBtn.x + _ppBtn.width;
+				_subtitleButton.x=_playerControls.width - _subtitleButton.width;
+				_audioSlider.x=_subtitleButton.x - _audioSlider.width;
+			}
+
+			
 			_subtitlePanel.width=_playerControls.width;
 			_subtitlePanel.height=_videoHeight * 0.75;
 			_subtitlePanel.x=_defaultMargin;
-			/*
-			 * Subtitle panel
-			 */
-			var y2:Number=_arrowContainer.visible ? _arrowContainer.height : 0;
-			var y3:Number=_micActivityBar.visible ? _micActivityBar.height : 0;
-
-			_playerControls.y+=y3 + y2;
-
-			_arrowContainer.y=_playerControls.y - _arrowContainer.height;
 			_subtitlePanel.y=_videoHeight - _subtitlePanel.height;
-
-			_micActivityBar.y=_playerControls.y - y2 - _micActivityBar.height;
 
 
 			_subtitleBox.y=0;
 			_subtitleBox.resize(_videoWidth, _videoHeight * 0.75);
 
 			// Resize arrowPanel
-			_arrowPanel.resize(_sBar.width, _arrowContainer.height - 8);
-			_arrowPanel.x=_sBar.x;
-			_arrowPanel.y=4;
-
-			// Resize RolePanel
-			//_roleTalkingPanel.resize(_videoWidth - _defaultMargin * 6 - _arrowPanel.width - _arrowPanel.x, _arrowPanel.height);
-			//_roleTalkingPanel.x=_arrowPanel.x + _arrowPanel.width + _defaultMargin * 3;
-			//_roleTalkingPanel.y=4;
-
+			_arrowPanel.resize(_scrubBar.width, 16);
+			_arrowPanel.x=_scrubBar.x;
+			_arrowPanel.y=_scrubBar.y - _arrowPanel.height;
+		
 			// Countdown
 			_countdownTxtFormat.color=getSkinColor(COUNTDOWN_COLOR);
 			_countdownTxt.setTextFormat(_countdownTxtFormat);
@@ -726,73 +698,6 @@ package com.babeliumproject.player
 			_overlayButton.width=_videoWidth;
 			_overlayButton.height=_videoHeight;
 
-
-			if (_subtitleStartEnd.visible)
-			{
-				_ppBtn.x=0;
-				_ppBtn.refresh();
-
-				//_recStopBtn.x=_ppBtn.x + _ppBtn.width;
-				//_recStopBtn.refresh();
-
-				//_subtitleStartEnd.x = _recStopBtn.x + _recStopBtn.width;
-				//_stopBtn.x=_ppBtn.x + _ppBtn.width;
-				//_stopBtn.refresh();
-
-				_subtitleStartEnd.x=_ppBtn.x + _ppBtn.width;
-				//_subtitleStartEnd.x=_stopBtn.x + _stopBtn.width;
-				_subtitleStartEnd.refresh();
-
-				_sBar.x=_subtitleStartEnd.x + _subtitleStartEnd.width;
-				_sBar.refresh();
-
-				_eTime.refresh();
-
-				_audioSlider.refresh();
-
-				_subtitleButton.includeInLayout=false;
-				_subtitleButton.visible=false;
-
-				_sBar.width=_videoWidth - _ppBtn.width - _subtitleStartEnd.width - _eTime.width - _audioSlider.width;
-				//_sBar.width=_videoWidth - _ppBtn.width - _stopBtn.width - _subtitleStartEnd.width - _eTime.width - _audioSlider.width;
-				//_sBar.width=_videoWidth - _ppBtn.width - _recStopBtn.width - _subtitleStartEnd.width - _eTime.width - _audioSlider.width;
-
-				_eTime.x=_sBar.x + _sBar.width;
-				_audioSlider.x=_eTime.x + _eTime.width;
-
-			}
-			else
-			{
-				_ppBtn.x=0;
-				_ppBtn.refresh();
-
-				//_stopBtn.x=_ppBtn.x + _ppBtn.width;
-				//_stopBtn.refresh();
-
-				_sBar.x=_ppBtn.x + _ppBtn.width;
-				//_sBar.x=_stopBtn.x + _stopBtn.width;
-				//_recStopBtn.x=_ppBtn.x + _ppBtn.width;
-				//_recStopBtn.refresh();
-
-				//_sBar.x=_recStopBtn.x + _recStopBtn.width;
-				_sBar.refresh();
-
-				_eTime.refresh();
-
-				_audioSlider.refresh();
-
-				_subtitleButton.includeInLayout=true;
-				_subtitleButton.visible=true;
-
-				_sBar.width=_videoWidth - _ppBtn.width - _eTime.width - _audioSlider.width - _subtitleButton.width;
-				//_sBar.width=_videoWidth - _ppBtn.width - _stopBtn.width - _eTime.width - _audioSlider.width - _subtitleButton.width;
-				//_sBar.width=_videoWidth - _ppBtn.width - _recStopBtn.width - _eTime.width - _audioSlider.width - _subtitleButton.width;
-
-				_eTime.x=_sBar.x + _sBar.width;
-				_audioSlider.x=_eTime.x + _eTime.width;
-
-			}
-
 			drawBG();
 		}
 
@@ -805,10 +710,9 @@ package com.babeliumproject.player
 
 			_micActivityBar.height=22;
 
-			var h2:Number=_arrowContainer.visible ? _arrowContainer.height : 0;
 			var h4:Number=_micActivityBar.visible ? _micActivityBar.height : 0;
 
-			totalHeight=_videoHeight + h2 + h4 + _playerControls.height;
+			totalHeight=_videoHeight + h4 + _scrubBar.height + _playerControls.height;
 
 			_bg.graphics.clear();
 
@@ -1027,7 +931,7 @@ package com.babeliumproject.player
 			if (!_media)
 				return;
 			
-			var seconds:Number=_sBar.seekPosition(_duration);
+			var seconds:Number=_scrubBar.seekPosition(_duration);
 			
 			_media.seek(seconds);
 			if (_state == PLAY_PARALLEL_STATE && _parallelMedia)
@@ -1345,13 +1249,16 @@ package com.babeliumproject.player
 				return;
 
 			var w:Number=_videoWidth / 2 - _blackPixelsBetweenVideos;
-			var h:int=Math.ceil(w * 0.75); //_video.height / _video.width);
-
+			//var h:int=Math.ceil(w * 0.75); //_video.height / _video.width);
+			var h:Number=_videoHeight;
+			
+			/*
 			if (_videoHeight != h) // cause we can call twice to this method
 				_lastVideoHeight=_videoHeight; // store last value
 
 			_videoHeight=h;
-
+			*/
+			
 			var scaleY:Number=h / _video.height;
 			var scaleX:Number=w / _video.width;
 			var scaleC:Number=scaleX < scaleY ? scaleX : scaleY;
@@ -1379,9 +1286,10 @@ package com.babeliumproject.player
 		{
 			logger.info("Reset video display");
 			// NOTE: problems with _videoWrapper.width
+			/*
 			if (_lastVideoHeight > _videoHeight)
 				_videoHeight=_lastVideoHeight;
-
+			*/
 			scaleVideo();
 
 			_camVideo.visible=false;
@@ -1425,13 +1333,15 @@ package com.babeliumproject.player
 			if (_state & SPLIT_FLAG)
 			{
 				var w:Number=_videoWidth / 2 - _blackPixelsBetweenVideos;
-				var h:int=Math.ceil(w * 0.75);
+				var h:int=_videoHeight;
 
+				/*
 				if (_videoHeight != h)
 					_lastVideoHeight=_videoHeight;
 
 				_videoHeight=h;
-
+				*/
+				
 				var scaleY:Number=h / _video.height;
 				var scaleX:Number=w / _video.width;
 				var scaleC:Number=scaleX < scaleY ? scaleX : scaleY;

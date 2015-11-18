@@ -1,11 +1,13 @@
 package com.babeliumproject.player.controls
 {
+	import com.babeliumproject.player.events.XMLSkinnableComponentEvent;
+	
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
-	import com.babeliumproject.player.events.XMLSkinnableComponentEvent;
+	import mx.utils.StringUtil;
 
 	public class XMLSkinnableComponent extends DictionarySkinnableComponent
 	{
@@ -89,7 +91,17 @@ package com.babeliumproject.player.controls
 				for each (var xElement:XML in xChild.child(XML_PROPERTY))
 				{
 					var propertyName:String=xElement.attribute(XML_NAME).toString();
-					var propertyValue:String=xElement.toString();
+					var propertyValue:*=null;
+					var value:String=xElement.toString();
+					if (value.indexOf(',')){
+						var valueArr:Array=value.split(',');
+						valueArr.forEach(function(item:Object, index:int, arr:Array):void{ 
+							arr[index]=StringUtil.trim(item as String);
+						}, this);
+						propertyValue=valueArr;
+					} else {
+						propertyValue=StringUtil.trim(value);
+					}
 					cmp.setSkinProperty(propertyName, propertyValue);
 				}
 			}

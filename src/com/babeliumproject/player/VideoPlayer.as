@@ -1,18 +1,11 @@
 package com.babeliumproject.player
 {
 
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.media.Video;
-	
-	import mx.core.UIComponent;
-	import mx.events.FlexEvent;
-	
 	import avmplus.getQualifiedClassName;
 	
 	import com.babeliumproject.player.controls.AudioSlider;
 	import com.babeliumproject.player.controls.BitmapSprite;
+	import com.babeliumproject.player.controls.ControlBar;
 	import com.babeliumproject.player.controls.ElapsedTime;
 	import com.babeliumproject.player.controls.ErrorSprite;
 	import com.babeliumproject.player.controls.PlayButton;
@@ -26,22 +19,34 @@ package com.babeliumproject.player
 	import com.babeliumproject.player.media.AMediaManager;
 	import com.babeliumproject.player.media.ARTMPManager;
 	import com.babeliumproject.player.media.AVideoManager;
+	import com.babeliumproject.utils.BusyIndicator;
+	import com.babeliumproject.utils.IDisposableObject;
+	
+	import flash.display.GradientType;
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	import flash.geom.Matrix;
+	import flash.media.Video;
+	
+	import mx.core.UIComponent;
+	import mx.events.FlexEvent;
 	
 	import org.as3commons.logging.api.ILogger;
 	import org.as3commons.logging.api.getLogger;
 	
-	import com.babeliumproject.utils.BusyIndicator;
-	import com.babeliumproject.utils.IDisposableObject;
+	import spark.components.Group;
 
 	public class VideoPlayer extends XMLSkinnableComponent
 	{
 		protected static const logger:ILogger=getLogger(VideoPlayer);
 
+		//Style property constants
 		public static const BG_COLOR:String="bgColor";
 		public static const BORDER_COLOR:String="borderColor";
 		public static const VIDEOBG_COLOR:String="videoBgColor";
 
-		protected const DEFAULT_VOLUME:Number=70;
+		public static const DEFAULT_VOLUME:Number=70;
 
 		protected var _video:Video;
 
@@ -65,8 +70,8 @@ package com.babeliumproject.player
 
 		protected var _eTime:ElapsedTime;
 		protected var _bg:Sprite;
-		protected var _playerControls:UIComponent;
-		protected var _sBar:ScrubberBar;
+		protected var _playerControls:ControlBar;
+		protected var _scrubBar:ScrubberBar;
 		protected var _audioSlider:AudioSlider;
 		protected var _videoHeight:Number=200;
 		protected var _videoWidth:Number=320;
@@ -110,18 +115,24 @@ package com.babeliumproject.player
 			_busyIndicator.width=48;
 			_busyIndicator.height=48;
 			_busyIndicator.visible=false;
+			
+			_scrubBar=new ScrubberBar();
 
-			_playerControls=new UIComponent();
+			_playerControls=new ControlBar();
+			_playerControls.height=28;
+			_playerControls.width=this.width;
 
 			_ppBtn=new PlayButton();
-			//_stopBtn=new StopButton();
-			_sBar=new ScrubberBar();
+			_ppBtn.height=28;
+			_ppBtn.width=40;
 			_eTime=new ElapsedTime();
+			_eTime.height=28;
+			_eTime.width=75;
 			_audioSlider=new AudioSlider(_currentVolume / 100); //Audio slider uses fraction values
+			_audioSlider.height=28;
 
+			
 			_playerControls.addChild(_ppBtn);
-			//_playerControls.addChild(_stopBtn);
-			_playerControls.addChild(_sBar);
 			_playerControls.addChild(_eTime);
 			_playerControls.addChild(_audioSlider);
 
@@ -130,13 +141,13 @@ package com.babeliumproject.player
 
 			addEventListener(FlexEvent.CREATION_COMPLETE, onComplete, false, 0, true);
 			_ppBtn.addEventListener(MouseEvent.CLICK, onPPBtnChanged, false, 0, true);
-			//_stopBtn.addEventListener(StopEvent.STOP_CLICK, onStopBtnClick, false, 0 , true);
 			_audioSlider.addEventListener(VolumeEvent.VOLUME_CHANGED, onVolumeChange, false, 0, true);
 
 			addChild(_bg);
 			addChild(_bgVideo);
 			addChild(_video);
 			addChild(_playerControls);
+			addChild(_scrubBar);
 			addChild(_topLayer);
 			addChild(_busyIndicator);
 
@@ -144,11 +155,11 @@ package com.babeliumproject.player
 			 * Adds skinable components to dictionary
 			 */
 			putSkinableComponent(COMPONENT_NAME, this);
+			putSkinableComponent(_playerControls.COMPONENT_NAME, _playerControls);
 			putSkinableComponent(_audioSlider.COMPONENT_NAME, _audioSlider);
 			putSkinableComponent(_eTime.COMPONENT_NAME, _eTime);
 			putSkinableComponent(_ppBtn.COMPONENT_NAME, _ppBtn);
-			putSkinableComponent(_sBar.COMPONENT_NAME, _sBar);
-			//putSkinableComponent(_stopBtn.COMPONENT_NAME, _stopBtn);
+			putSkinableComponent(_scrubBar.COMPONENT_NAME, _scrubBar);
 		}
 
 		public function loadVideoByUrl(param:Object, timemarkers:Object=null):void
@@ -374,21 +385,21 @@ package com.babeliumproject.player
 		{
 			if (value)
 			{
-				_sBar.addEventListener(ScrubberBarEvent.SCRUBBER_DROPPED, onScrubberDropped, false, 0, true);
-				_sBar.addEventListener(ScrubberBarEvent.SCRUBBER_DRAGGING, onScrubberDragging, false, 0, true);
+				_scrubBar.addEventListener(ScrubberBarEvent.SCRUBBER_DROPPED, onScrubberDropped, false, 0, true);
+				_scrubBar.addEventListener(ScrubberBarEvent.SCRUBBER_DRAGGING, onScrubberDragging, false, 0, true);
 			}
 			else
 			{
-				_sBar.removeEventListener(ScrubberBarEvent.SCRUBBER_DROPPED, onScrubberDropped);
-				_sBar.removeEventListener(ScrubberBarEvent.SCRUBBER_DRAGGING, onScrubberDragging);
+				_scrubBar.removeEventListener(ScrubberBarEvent.SCRUBBER_DROPPED, onScrubberDropped);
+				_scrubBar.removeEventListener(ScrubberBarEvent.SCRUBBER_DRAGGING, onScrubberDragging);
 			}
 
-			_sBar.enableSeek(value);
+			_scrubBar.enableSeek(value);
 		}
 
 		public function seekTo(seconds:Number):void
 		{
-			_sBar.updateProgress(seconds, _duration);
+			_scrubBar.updateProgress(seconds, _duration);
 			_media.seek(seconds);
 		}
 
@@ -507,31 +518,22 @@ package com.babeliumproject.player
 			_bgVideo.graphics.beginFill(getSkinColor(VIDEOBG_COLOR));
 			_bgVideo.graphics.drawRect(_defaultMargin, _defaultMargin, _videoWidth, _videoHeight);
 			_bgVideo.graphics.endFill();
-
+			
+			_scrubBar.width=_videoWidth;
+			_scrubBar.y=_defaultMargin+_videoHeight;
+			_scrubBar.x=_defaultMargin;
+			
 			_playerControls.width=_videoWidth;
-			_playerControls.height=20;
-			_playerControls.y=_defaultMargin + _videoHeight;
+			_playerControls.y=_scrubBar.y+_scrubBar.height;
 			_playerControls.x=_defaultMargin;
 
 			_ppBtn.x=0;
+			_eTime.x=_ppBtn.x+_ppBtn.width;
+			_audioSlider.x=_playerControls.width-_audioSlider.width;
+			
 			_ppBtn.refresh();
-
-			//_stopBtn.x=_ppBtn.x + _ppBtn.width;
-			//_stopBtn.refresh();
-
-			//_sBar.x=_stopBtn.x + _stopBtn.width;
-			_sBar.x=_ppBtn.x + _ppBtn.width;
-			_sBar.refresh();
-
 			_eTime.refresh();
-
 			_audioSlider.refresh();
-
-			//_sBar.width=_videoWidth - _ppBtn.width - _stopBtn.width - _eTime.width - _audioSlider.width;
-			_sBar.width=_videoWidth - _ppBtn.width - _eTime.width - _audioSlider.width;
-
-			_eTime.x=_sBar.x + _sBar.width;
-			_audioSlider.x=_eTime.x + _eTime.width;
 
 			_busyIndicator.x=(_videoWidth - _busyIndicator.width) / 2;
 			_busyIndicator.y=(_videoHeight - _busyIndicator.height) / 2;
@@ -763,11 +765,11 @@ package com.babeliumproject.player
 				return;
 
 			_currentTime=_media.currentTime;
-			_sBar.updateProgress(_currentTime, _duration);
+			_scrubBar.updateProgress(_currentTime, _duration);
 
 			// if not streaming show loading progress
 			if (!_mediaNetConnectionUrl)
-				_sBar.updateLoaded(_media.bytesLoaded / _media.bytesTotal);
+				_scrubBar.updateLoaded(_media.bytesLoaded / _media.bytesTotal);
 
 			_eTime.updateElapsedTime(_currentTime, _duration);
 		}
@@ -777,7 +779,7 @@ package com.babeliumproject.player
 			if (!_media)
 				return;
 
-			_media.seek(_sBar.seekPosition(_duration));
+			_media.seek(_scrubBar.seekPosition(_duration));
 		}
 
 		protected function onScrubberDragging(e:Event):void
@@ -844,7 +846,7 @@ package com.babeliumproject.player
 		 **/
 		protected function resetAppearance():void
 		{
-			_sBar.updateProgress(0, 10);
+			_scrubBar.updateProgress(0, 10);
 			_eTime.updateElapsedTime(0, 0);
 			resetVideo(_video);
 		}

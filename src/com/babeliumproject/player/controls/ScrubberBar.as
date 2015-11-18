@@ -55,7 +55,7 @@ package com.babeliumproject.player.controls
 		private var _barWidth:Number=100;
 		private var _barHeight:Number=10;
 
-		private var _defaultHeight:Number=20;
+		private var _defaultHeight:Number=10;
 		private var _defaultY:Number;
 		private var _defaultX:Number;
 		private var _maxX:Number;
@@ -70,6 +70,8 @@ package com.babeliumproject.player.controls
 
 		private var _lastScrubberX:Number=0;
 		private var _lastProgBarWidth:Number=0;
+		
+		private var _padding:Number=0;
 
 		public function ScrubberBar()
 		{
@@ -180,9 +182,10 @@ package com.babeliumproject.player.controls
 			if (height == 0)
 				height=_defaultHeight;
 			if (width == 0)
-				width=_barWidth + 10;
+				width=_barWidth + _padding;
 			if (width > _barWidth)
-				_barWidth=width - 10;
+				_barWidth=width - _padding;
+			_barHeight=height-_padding;
 
 			createBG(_bg, width, height);
 
