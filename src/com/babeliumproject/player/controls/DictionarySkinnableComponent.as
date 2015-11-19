@@ -23,8 +23,13 @@ package com.babeliumproject.player.controls
 		public static const BORDER_COLOR:String='borderColor';
 		public static const BORDER_WIDTH:String='borderWidth';
 		
+		public static const BORDER_RIGHT_COLOR:String='borderRightColor';
+		public static const BORDER_RIGHT_WIDTH:String='borderRightWidth';
+		public static const BORDER_LEFT_COLOR:String='borderLeftColor';
+		public static const BORDER_LEFT_WIDTH:String='borderLeftWidth';
 		
-		private var _bg:Sprite;
+		
+		protected var _bg:Sprite;
 		
 		private var _skinProperties:Object;
 		public var COMPONENT_NAME:String;

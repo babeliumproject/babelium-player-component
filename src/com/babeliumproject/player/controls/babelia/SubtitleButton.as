@@ -1,7 +1,7 @@
 package com.babeliumproject.player.controls.babelia
 {
 	import com.babeliumproject.player.ResourceData;
-	import com.babeliumproject.player.controls.DictionarySkinnableComponent;
+	import com.babeliumproject.player.controls.DictionarySkinnableButton;
 	import com.babeliumproject.player.events.babelia.SubtitleButtonEvent;
 	
 	import flash.display.GradientType;
@@ -11,85 +11,109 @@ package com.babeliumproject.player.controls.babelia
 	
 	import spark.components.ToggleButton;
 	
-	public class SubtitleButton extends DictionarySkinnableComponent
+	public class SubtitleButton extends DictionarySkinnableButton
 	{
-		/**
-		 * SKIN CONSTANTS
-		 */
-		public static const BG_COLOR:String = "bgColor";
-		
-		public static const BG_GRADIENT_ANGLE:String = "bgGradientAngle";
-		public static const BG_GRADIENT_START_COLOR:String = "bgGradientStartColor";
-		public static const BG_GRADIENT_END_COLOR:String = "bgGradientEndColor";
-		public static const BG_GRADIENT_START_ALPHA:String = "bgGradientStartAlpha";
-		public static const BG_GRADIENT_END_ALPHA:String = "bgGradientEndAlpha";
-		public static const BG_GRADIENT_START_RATIO:String = "bgGradientStartRatio";
-		public static const BG_GRADIENT_END_RATIO:String = "bgGradientEndRatio";
-		public static const BORDER_COLOR:String = "borderColor";
-		public static const BORDER_WEIGHT:String = "borderWeight";
-		
+	
 		
 		private var _button:ToggleButton;
 		private var _state:String;
 		private var _boxColor:uint = 0xFFFFFF;
 		private var _selected:Boolean;
 		
+		protected var iconCC:Object;
+		
 		public function SubtitleButton(state:Boolean = false)
 		{
-			super("SubtitleButton"); // Required to setup skinable component
+			super("SubtitleButton");
 			
-			_button = new ToggleButton();
-			_button.buttonMode = true;
-			_button.label = "CC";
-			_button.setStyle("fontSize",14);
-			_button.setStyle("fontWeight", "bold");
-			_button.setStyle("cornerRadius", 0);
-			_button.setStyle("borderWeight",0);
-		
-			_button.selected = state ? true : false;
-			_button.toolTip = _button.selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
-
-			_button.addEventListener(MouseEvent.CLICK, showHideSubtitles);
+			_selected=false;
 			
-			addChild( _button );
+			iconCC = {
+				'commands': [2,2,2,2],
+				'data': [0,10,10,10,10,0,0,0]
+			};
 		}
 		
 		override public function dispose():void{
 			super.dispose();
-			
-			if(_button){
-				_button.removeEventListener(MouseEvent.CLICK,showHideSubtitles);
-				removeChildSuppressed(_button);
-				_button=null;
-			}
-		}
-		
-		override public function availableProperties(obj:Array = null) : void
-		{
-			super.availableProperties([BG_COLOR]);
 		}
 		
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
 			
-			_button.width=width;
-			_button.height=height;
+			drawIcon(_iconDisplay,iconCC);
+			drawIcon(_iconDisplayHover,iconCC,'Hover');
+			drawIcon(_iconDisplayActive,iconCC,'Active');
+			
+			_iconDisplay.width=14;
+			_iconDisplay.height=14;
+			_iconDisplayHover.width=14;
+			_iconDisplayHover.height=14;
+			_iconDisplayActive.width=14;
+			_iconDisplayActive.height=14;
+			
+			var wc:Number=this.width/2;
+			var hc:Number=this.height/2;
+			
+			_iconDisplay.x = wc - _iconDisplay.width/2;
+			_iconDisplay.y = hc - _iconDisplay.height/2;
+			_iconDisplayHover.x=wc - _iconDisplayHover.width/2;
+			_iconDisplayHover.y=hc - _iconDisplayHover.height/2;
+			_iconDisplayActive.x=wc - _iconDisplayActive.width/2;
+			_iconDisplayActive.y=hc - _iconDisplayActive.height/2;
+		}
+		
+		public function get selected():Boolean{
+			return _selected;
 		}
 		
 		public function set selected(value:Boolean):void{
-			if(enabled){
-				if(_selected == value) return;
-				
-				_selected = value;
-				_button.selected = _selected;
-				_button.toolTip = _selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
+			if(_selected == value) 
+				return;
+			
+			_selected = value;
+			
+			if(_selected){
+				_bgActive.visible=true;
+				_iconDisplayActive.visible=true;
+			} else {
+				_bgActive.visible=false;
+				_iconDisplayActive.visible=false;
 			}
+				
+			//_button.selected = _selected;
+			//_button.toolTip = _selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
+		}
+	
+		override protected function onMouseOver(e:MouseEvent):void
+		{
+			trace("onMouseOver");
+			_bgHover.visible=true;
+			_bg.visible=false;
+			
+			_iconDisplayHover.visible=true;
+			_iconDisplay.visible=false;
+		}
+			
+		override protected function onMouseOut(e:MouseEvent):void
+		{
+			_bgHover.visible=false;
+			_bg.visible=true;
+			
+			_iconDisplayHover.visible=false;
+			_iconDisplay.visible=true;
 		}
 		
-		override public function set enabled(value:Boolean) : void
-		{
-			if(_button) _button.enabled = value;
-			super.enabled=value;
+		override protected function onClick(e:MouseEvent):void{
+			trace("onMouseClick");
+			//Selected function appplies the element visibilty logic
+			if(selected){
+				selected=false;
+			} else {
+				selected=true;
+			}
+			
+			
 		}
 		
 		private function showHideSubtitles(e:MouseEvent) : void

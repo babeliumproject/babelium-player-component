@@ -7,50 +7,51 @@ package com.babeliumproject.player.controls
 	import flash.filters.BitmapFilterQuality;
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Matrix;
+	import flash.text.TextField;
+	
+	import spark.components.TextInput;
 
 	public class DictionarySkinnableButton extends DictionarySkinnableComponent
 	{
-		/**
-		 * Skin related constants
-		 */
-		public static const BG_COLOR:String="bgColor";
-		public static const OVERBG_COLOR:String="overBgColor";
-		public static const ICON_COLOR:String="iconColor";
-
-		public static const BG_GRADIENT_ANGLE:String="bgGradientAngle";
-		public static const BG_GRADIENT_START_COLOR:String="bgGradientStartColor";
-		public static const BG_GRADIENT_END_COLOR:String="bgGradientEndColor";
-		public static const BG_GRADIENT_START_ALPHA:String="bgGradientStartAlpha";
-		public static const BG_GRADIENT_END_ALPHA:String="bgGradientEndAlpha";
-		public static const BG_GRADIENT_START_RATIO:String="bgGradientStartRatio";
-		public static const BG_GRADIENT_END_RATIO:String="bgGradientEndRatio";
-		public static const BORDER_COLOR:String="borderColor";
-		public static const BORDER_WEIGHT:String="borderWeight";
-
-		/**
-		 * Variables
-		 *
-		 */
-		private var bg:Sprite;
-		private var bgOver:Sprite;
-		private var bgClick:Sprite;
-		protected var btn:Sprite;
+		public static const COLOR:String="color";
+		
+		public static const BACKGROUND_COLOR_HOVER:String="backgroundColorHover";
+		public static const BORDER_COLOR_HOVER:String="borderColorHover";
+		public static const BORDER_WIDTH_HOVER:String="borderWidthHover";
+		public static const COLOR_HOVER:String="colorHover";
+		
+		public static const BACKGROUND_COLOR_ACTIVE:String="backgroundColorActive";
+		public static const BORDER_COLOR_ACTIVE:String="borderColorActive";
+		public static const BORDER_WIDTH_ACTIVE:String="borderWidthActive";
+		public static const COLOR_ACTIVE:String="colorActive";
+	
+		protected var _bgHover:Sprite;
+		protected var _bgActive:Sprite;
+		
+		protected var _iconDisplay:Sprite;
+		protected var _iconDisplayHover:Sprite;
+		protected var _iconDisplayActive:Sprite;
 
 		public function DictionarySkinnableButton(name:String="DictionarySkinnableButton")
 		{
 			super(name);
+			
+			_bgHover=new Sprite();
+			_bgActive=new Sprite();
+			
 
+			_iconDisplay=new Sprite();
+			_iconDisplayHover=new Sprite();
+			_iconDisplayActive=new Sprite();
 
-			bgClick=new Sprite();
-			bgOver=new Sprite();
-			bg=new Sprite();
-			btn=new Sprite();
-
-			//addChild( bgClick );
-			addChild(bgOver);
-			addChild(bg);
-
-			//addChild( btn );
+			addChild(_bgActive);
+			addChild(_bgHover);
+			
+			
+			addChild(_iconDisplay);
+			addChild(_iconDisplayActive);
+			addChild(_iconDisplayHover);
+			
 
 			this.buttonMode=true;
 			this.useHandCursor=true;
@@ -67,23 +68,15 @@ package com.babeliumproject.player.controls
 			this.removeEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 			this.removeEventListener(MouseEvent.CLICK, onClick);
 		}
+		
+		override public function set enabled(value:Boolean):void
+		{	
+			super.enabled=value;
 
-		override public function availableProperties(obj:Array=null):void
-		{
-			super.availableProperties([BG_COLOR, OVERBG_COLOR, ICON_COLOR]);
-		}
+			this.buttonMode=value;
+			this.useHandCursor=value;
 
-		/**
-		 * Enable/disable stop button
-		 **/
-		override public function set enabled(flag:Boolean):void
-		{
-			super.enabled=flag;
-
-			this.buttonMode=flag;
-			this.useHandCursor=flag;
-
-			if (flag)
+			if (value)
 			{
 				this.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 				this.addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
@@ -96,79 +89,61 @@ package com.babeliumproject.player.controls
 				this.removeEventListener(MouseEvent.CLICK, onClick);
 			}
 
-			if (bg)
+			if (_bg)
 				onMouseOut(null);
 		}
 
-		/**
-		 * Methods
-		 *
-		 */
-
-
-		/** OVERRIDEN */
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
 			super.updateDisplayList(unscaledWidth, unscaledHeight);
+			
+			drawBackground(_bgHover,'Hover');
+			drawBackground(_bgActive,'Active');
 
-			var borderWeight:int=getSkinColor(BORDER_WEIGHT) ? getSkinColor(BORDER_WEIGHT) : 0;
-			var availableWidth:int=unscaledWidth - borderWeight;
-			var availableHeight:int=unscaledHeight - borderWeight;
-
-			this.graphics.clear();
-
-			bgOver.graphics.clear();
-			bgOver.graphics.beginFill(getSkinColor(OVERBG_COLOR));
-			if (borderWeight)
-				bgOver.graphics.lineStyle(borderWeight, getSkinColor(BORDER_COLOR));
-			bgOver.graphics.drawRect(0, 0, availableWidth, availableHeight);
-			bgOver.graphics.endFill();
-
-			var matr:Matrix=new Matrix();
-			matr.createGradientBox(availableWidth, availableHeight, getSkinColor(BG_GRADIENT_ANGLE) * Math.PI / 180, 0, 0);
-
-			var colors:Array=[getSkinColor(BG_GRADIENT_START_COLOR), getSkinColor(BG_GRADIENT_END_COLOR)];
-			var alphas:Array=[getSkinColor(BG_GRADIENT_START_ALPHA), getSkinColor(BG_GRADIENT_END_ALPHA)];
-			var ratios:Array=[getSkinColor(BG_GRADIENT_START_RATIO), getSkinColor(BG_GRADIENT_END_RATIO)];
-
-			bg.graphics.clear();
-			bg.graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matr);
-			if (getSkinColor(BORDER_WEIGHT) > 0)
-				bg.graphics.lineStyle(getSkinColor(BORDER_WEIGHT), getSkinColor(BORDER_COLOR));
-			bg.graphics.drawRect(0, 0, availableWidth, availableHeight);
-			bg.graphics.endFill();
-
-//			var filter:BitmapFilter = getBitmapFilter();
-//			var myFilters:Array = new Array();
-//			myFilters.push(filter);
-//			bgClick.graphics.clear();
-//			bgClick.graphics.copyFrom(bg.graphics);
-//			bgClick.filters = myFilters;
-
-			//btn.x = this.width/2 - btn.width/2;
-			//btn.y = this.height/2 - btn.height/2;
+		}
+		
+		protected function drawIcon(element:Sprite,pathData:Object,state:String=''):void{
+			if(!element || !pathData) return;
+			
+			if(!pathData.hasOwnProperty('commands') || !pathData.hasOwnProperty('data'))
+				return;
+			
+			var commands:Vector.<int>=Vector.<int>(pathData.commands);
+			var data:Vector.<Number>=Vector.<Number>(pathData.data);
+			
+			element.graphics.clear();
+			element.graphics.beginFill(getSkinColor(COLOR+state));
+			element.graphics.drawPath(commands,data);
+			element.graphics.endFill();
 		}
 
 
-		private function onMouseOver(e:MouseEvent):void
+		protected function onMouseOver(e:MouseEvent):void
 		{
-			bgOver.alpha=1;
-			bg.alpha=0;
+			_bgHover.visible=true;
+			_bgActive.visible=false;
+			_bg.visible=false;
+			
+			_iconDisplayHover.visible=true;
+			_iconDisplayActive.visible=false;
+			_iconDisplay.visible=false;
 		}
 
 
-		private function onMouseOut(e:MouseEvent):void
+		protected function onMouseOut(e:MouseEvent):void
 		{
-			bgOver.alpha=0;
-			bg.alpha=1;
+			_bgActive.visible=false;
+			_bgHover.visible=false;
+			_bg.visible=true;
+			
+			_iconDisplayHover.visible=false;
+			_iconDisplayActive.visible=false;
+			_iconDisplay.visible=true;
 		}
 
-
-		// NOTE: this methos is empty, but don't remove it
 		protected function onClick(e:MouseEvent):void
 		{
-			//bg.alpha = 0;
-			//bgOver.alpha = 0;
+			return;
 		}
 
 		private function getBitmapFilter():BitmapFilter

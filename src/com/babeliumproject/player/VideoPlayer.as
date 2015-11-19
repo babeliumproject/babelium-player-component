@@ -69,7 +69,7 @@ package com.babeliumproject.player
 		//public var _stopBtn:StopButton;
 
 		protected var _eTime:ElapsedTime;
-		protected var _bg:Sprite;
+		//protected var _bg:Sprite;
 		protected var _playerControls:ControlBar;
 		protected var _scrubBar:ScrubberBar;
 		protected var _audioSlider:AudioSlider;
@@ -119,17 +119,17 @@ package com.babeliumproject.player
 			_scrubBar=new ScrubberBar();
 
 			_playerControls=new ControlBar();
-			_playerControls.height=28;
+			_playerControls.height=26;
 			_playerControls.width=this.width;
 
 			_ppBtn=new PlayButton();
-			_ppBtn.height=28;
+			_ppBtn.height=26;
 			_ppBtn.width=40;
 			_eTime=new ElapsedTime();
-			_eTime.height=28;
+			_eTime.height=26;
 			_eTime.width=75;
 			_audioSlider=new AudioSlider(_currentVolume / 100); //Audio slider uses fraction values
-			_audioSlider.height=28;
+			_audioSlider.height=26;
 
 			
 			_playerControls.addChild(_ppBtn);

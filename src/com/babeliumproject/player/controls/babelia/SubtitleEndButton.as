@@ -29,9 +29,9 @@ package com.babeliumproject.player.controls.babelia
 		
 		private function createBtn() : void
 		{
-			var g:Sprite = btn;
+			var g:Sprite = _iconDisplay;
 			g.graphics.clear();
-			g.graphics.beginFill( getSkinColor(ICON_COLOR) );
+			g.graphics.beginFill( getSkinColor(COLOR) );
 			g.graphics.moveTo( 0, 5 );
 			g.graphics.lineTo( 12, 5 );
 			g.graphics.lineTo( 7, 0 );

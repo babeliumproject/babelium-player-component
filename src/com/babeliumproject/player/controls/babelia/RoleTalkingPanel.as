@@ -28,7 +28,6 @@ package com.babeliumproject.player.controls.babelia
 		public static const CORNER_RADIUS:String="cornerRadius";
 		public static const FONT_FAMILY:String="fontFamily";
 		
-		private var _bg:Sprite;
 		private var _talking:Boolean = false;
 		private var _boxWidth:Number = 200;
 		private var _boxHeight:Number = 50;

@@ -19,7 +19,6 @@ package com.babeliumproject.player.controls.babelia
 		public static const CORNER_RADIUS:String="cornerRadius";
 		public static const BG_ALPHA:String="bgAlpha";
 
-		private var _bg:Sprite;
 		private var _arrows:ArrayCollection;
 		private var _dataProvider:Object;
 		private var _boxWidth:Number=500;

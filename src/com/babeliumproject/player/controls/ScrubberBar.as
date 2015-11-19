@@ -47,7 +47,6 @@ package com.babeliumproject.player.controls
 		private var _progBar:Sprite;
 		private var _loadedBar:Sprite;
 		private var _scrubber:Sprite;
-		private var _bg:Sprite;
 		private var _marks:Sprite;
 		private var _marksProg:Sprite;
 		private var _marksLoaded:Sprite;
@@ -82,7 +81,6 @@ package com.babeliumproject.player.controls
 			_progBar=new Sprite();
 			_loadedBar=new Sprite();
 			_scrubber=new Sprite();
-			_bg=new Sprite();
 
 			_marks=new Sprite();
 			_marksProg=new Sprite();

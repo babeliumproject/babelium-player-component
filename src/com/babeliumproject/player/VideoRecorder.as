@@ -174,7 +174,7 @@ package com.babeliumproject.player
 			_captionmgr=new CaptionManager();
 
 			_subtitleButton=new SubtitleButton();
-			_subtitleButton.height=28;
+			_subtitleButton.height=26;
 			_subtitleButton.width=50;
 			_playerControls.addChild(_subtitleButton);
 

@@ -23,16 +23,16 @@ package com.babeliumproject.player.controls
 			super.updateDisplayList( unscaledWidth, unscaledHeight );
 			
 			createStopBtn();
-			btn.x = this.width/2 - btn.width/2;
-			btn.y = this.height/2 - btn.height/2;
-			addChild(btn);
+			_iconDisplay.x = this.width/2 - _iconDisplay.width/2;
+			_iconDisplay.y = this.height/2 - _iconDisplay.height/2;
+			addChild(_iconDisplay);
 		}
 		
 		private function createStopBtn() : void
 		{
-			var g:Sprite = btn;
+			var g:Sprite = _iconDisplay;
 			g.graphics.clear();
-			g.graphics.beginFill( getSkinColor(ICON_COLOR) );
+			g.graphics.beginFill( getSkinColor(COLOR) );
 			g.graphics.drawRect( 0, 0, 10, 10 );
 			g.graphics.endFill();
 		}

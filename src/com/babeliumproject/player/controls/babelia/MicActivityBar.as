@@ -30,7 +30,6 @@ package com.babeliumproject.player.controls.babelia
 		private var _defaultWidth:Number = 80;
 		private var _defaultHeight:Number = 20;
 		
-		private var _bg:Sprite;
 		private var _sliderArea:Sprite;
 		private var _amount:Sprite;
 		private var _textBox:TextField;

@@ -24,10 +24,10 @@ package com.babeliumproject.player.controls
 			super("ElapsedTime");
 
 			_timeBox=new TextField();
-			_timeBox.text=strTime+"/"+strDuration;
+			_timeBox.text=strTime+" / "+strDuration;
 			_timeBox.selectable=false;
 
-			tf.bold=false;
+			tf.bold=true;
 			tf.align="center";
 			tf.font="Arial";
 
@@ -40,11 +40,6 @@ package com.babeliumproject.player.controls
 			super.dispose();
 			
 			//There are no objects that need to be manually disposed
-		}
-
-		override public function availableProperties(obj:Array=null):void
-		{
-			super.availableProperties([BACKGROUND_COLOR, BORDER_COLOR, BORDER_WIDTH, COLOR]);
 		}
 
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
@@ -83,7 +78,7 @@ package com.babeliumproject.player.controls
 			//Update display only once per second and if there are any changes
 			if (change)
 			{
-				_timeBox.text=strTime + "/" + strDuration;
+				_timeBox.text=strTime + " / " + strDuration;
 				_timeBox.setTextFormat(tf);
 			}
 		}

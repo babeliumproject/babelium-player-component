@@ -45,7 +45,6 @@ package com.babeliumproject.player.controls
 		private var _barMarginX:uint=5;
 		private var _barMarginY:uint=5;
 		
-		private var _bg:Sprite;
 		private var _sliderArea:Sprite;
 		private var _amount:Sprite;
 		private var _scrubber:Sprite;

@@ -33,11 +33,6 @@ package com.babeliumproject.player.controls.babelia
 			//There are no objects that need to be manually disposed
 		}
 		
-		override public function availableProperties(obj:Array = null) : void
-		{
-			super.availableProperties([BG_COLOR,OVERBG_COLOR,ICON_COLOR]);
-		}
-		
 		public function set State( state:String ):void
 		{
 			_state = state;
@@ -58,26 +53,26 @@ package com.babeliumproject.player.controls.babelia
 			if( _state == START_STATE )
 			{
 				CreateStartButton();
-				btn.x = this.width/2 - btn.width/2;
-				btn.y = this.height/2 - btn.height/2;
+				_iconDisplay.x = this.width/2 - _iconDisplay.width/2;
+				_iconDisplay.y = this.height/2 - _iconDisplay.height/2;
 				this.toolTip = resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SUBTITLE_START_TIME_TOOLTIP');
 			}
 			else
 			{
 				CreateEndButton();
-				btn.x = this.width/2 - btn.width/2;
-				btn.y = this.height/2 - btn.height/2;
+				_iconDisplay.x = this.width/2 - _iconDisplay.width/2;
+				_iconDisplay.y = this.height/2 - _iconDisplay.height/2;
 				this.toolTip = resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SUBTITLE_STOP_TIME_TOOLTIP');
 			}
-			addChild(btn);
+			addChild(_iconDisplay);
 		}
 		
 		
 		private function CreateStartButton():void
 		{
-			var g:Sprite = btn;
+			var g:Sprite = _iconDisplay;
 			g.graphics.clear();
-			g.graphics.beginFill( getSkinColor(ICON_COLOR) );
+			g.graphics.beginFill( getSkinColor(COLOR) );
 			g.graphics.moveTo( 0, 5 );
 			g.graphics.lineTo( 5, 0 );
 			g.graphics.lineTo( 5, 3 );
@@ -89,9 +84,9 @@ package com.babeliumproject.player.controls.babelia
 		
 		private function CreateEndButton():void
 		{
-			var g:Sprite = btn;
+			var g:Sprite = _iconDisplay;
 			g.graphics.clear();
-			g.graphics.beginFill( getSkinColor(ICON_COLOR) );
+			g.graphics.beginFill( getSkinColor(COLOR) );
 			g.graphics.moveTo( 0, 5 );
 			g.graphics.lineTo( 12, 5 );
 			g.graphics.lineTo( 7, 0 );
