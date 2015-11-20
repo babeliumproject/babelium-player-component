@@ -175,7 +175,7 @@ package com.babeliumproject.player
 
 			_subtitleButton=new SubtitleButton();
 			_subtitleButton.height=26;
-			_subtitleButton.width=50;
+			_subtitleButton.width=40;
 			_playerControls.addChild(_subtitleButton);
 
 			_subtitlePanel=new UIComponent();

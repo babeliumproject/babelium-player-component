@@ -7,7 +7,13 @@ package com.babeliumproject.player.controls
 	import flash.filters.BitmapFilterQuality;
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.text.TextField;
+	
+	import mx.controls.ToolTip;
+	import mx.core.IToolTip;
+	import mx.events.ToolTipEvent;
+	import mx.utils.ObjectUtil;
 	
 	import spark.components.TextInput;
 
@@ -59,6 +65,8 @@ package com.babeliumproject.player.controls
 			this.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 			this.addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 			this.addEventListener(MouseEvent.CLICK, onClick);
+			this.addEventListener(ToolTipEvent.TOOL_TIP_CREATE, onToolTipCreate);
+			this.addEventListener(ToolTipEvent.TOOL_TIP_SHOW, onToolTipShow);
 		}
 
 		override public function dispose():void
@@ -67,6 +75,8 @@ package com.babeliumproject.player.controls
 			this.removeEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 			this.removeEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 			this.removeEventListener(MouseEvent.CLICK, onClick);
+			this.removeEventListener(ToolTipEvent.TOOL_TIP_CREATE, onToolTipCreate);
+			this.removeEventListener(ToolTipEvent.TOOL_TIP_SHOW, onToolTipShow);
 		}
 		
 		override public function set enabled(value:Boolean):void
@@ -144,6 +154,23 @@ package com.babeliumproject.player.controls
 		protected function onClick(e:MouseEvent):void
 		{
 			return;
+		}
+		
+		protected function onToolTipCreate(event:ToolTipEvent):void{
+			var ct:ToolTip=new ToolTip();
+			ct.setStyle("backgroundColor",0x333333);
+			ct.setStyle("cornerRadius",0);
+			ct.setStyle("color",0xFFFFFF);
+			ct.setStyle("fontSize",12);
+			ct.setStyle("fontWeight","bold");
+			ct.setStyle("borderVisible",false);
+			event.toolTip=ct;
+		}
+		
+		protected function onToolTipShow(event:ToolTipEvent):void{
+			var pt:Point=new Point(0, 0);
+			pt=event.currentTarget.contentToGlobal(pt);
+			event.toolTip.y=pt.y-event.toolTip.height-4;
 		}
 
 		private function getBitmapFilter():BitmapFilter
