@@ -28,16 +28,6 @@ package com.babeliumproject.player.controls
 		public static const MUTEOVERBG_COLOR:String = "muteOverBgColor";
 		public static const MUTE_COLOR:String = "muteColor";
 		
-		public static const BG_GRADIENT_ANGLE:String = "bgGradientAngle";
-		public static const BG_GRADIENT_START_COLOR:String = "bgGradientStartColor";
-		public static const BG_GRADIENT_END_COLOR:String = "bgGradientEndColor";
-		public static const BG_GRADIENT_START_ALPHA:String = "bgGradientStartAlpha";
-		public static const BG_GRADIENT_END_ALPHA:String = "bgGradientEndAlpha";
-		public static const BG_GRADIENT_START_RATIO:String = "bgGradientStartRatio";
-		public static const BG_GRADIENT_END_RATIO:String = "bgGradientEndRatio";
-		public static const BORDER_COLOR:String = "borderColor";
-		public static const BORDER_WEIGHT:String = "borderWeight";
-		
 		
 		private var _defaultWidth:Number = 80;
 		private var _defaultHeight:Number = 20;
@@ -231,12 +221,7 @@ package com.babeliumproject.player.controls
 		
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
-			if( width == 0 ) width = _defaultWidth;
-			if( height == 0 ) height = _defaultHeight;
-		
-			this.graphics.clear();
-			
-			createBG(_bg,width,height);
+			super.updateDisplayList(unscaledWidth,unscaledHeight);
 			
 			// mute button
 			_mutOverBg.graphics.clear();
@@ -282,23 +267,6 @@ package com.babeliumproject.player.controls
 			_amount.y = _sliderArea.y;
 			
 			trace("[Volume display changed] CurrentVolume: "+_currentVolume*100+"%, AmountBar: "+_volAmountWidth+"/"+_barWidth);
-		}
-		
-		private function createBG( bg:Sprite, bgWidth:Number, bgHeight:Number ):void
-		{
-			var matr:Matrix = new Matrix();
-			matr.createGradientBox(bgHeight, bgHeight, getSkinColor(BG_GRADIENT_ANGLE)*Math.PI/180, 0, 0);
-			
-			var colors:Array = [getSkinColor(BG_GRADIENT_START_COLOR), getSkinColor(BG_GRADIENT_END_COLOR)];
-			var alphas:Array = [getSkinColor(BG_GRADIENT_START_ALPHA), getSkinColor(BG_GRADIENT_END_ALPHA)];
-			var ratios:Array = [getSkinColor(BG_GRADIENT_START_RATIO), getSkinColor(BG_GRADIENT_END_RATIO)];
-			
-			bg.graphics.clear();
-			bg.graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matr);
-			if(getSkinColor(BORDER_WEIGHT) > 0)
-				bg.graphics.lineStyle(getSkinColor(BORDER_WEIGHT),getSkinColor(BORDER_COLOR));
-			bg.graphics.drawRect( 0, 0, bgWidth, bgHeight );
-			bg.graphics.endFill();
 		}
 		
 		private function createBox( b:Sprite, color:Object, bWidth:Number, bHeight:Number, border:Boolean = false, borderColor:uint = 0, borderSize:Number = 1, alpha:Number = 1 ):void

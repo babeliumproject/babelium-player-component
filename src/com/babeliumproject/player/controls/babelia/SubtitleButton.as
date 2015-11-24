@@ -13,11 +13,7 @@ package com.babeliumproject.player.controls.babelia
 	
 	public class SubtitleButton extends DictionarySkinnableButton
 	{
-	
-		
-		private var _button:ToggleButton;
 		private var _state:String;
-		private var _boxColor:uint = 0xFFFFFF;
 		private var _selected:Boolean;
 		
 		protected var iconCC:Object;
@@ -84,9 +80,6 @@ package com.babeliumproject.player.controls.babelia
 				_bgActive.visible=false;
 				_iconDisplayActive.visible=false;
 			}
-				
-			//_button.selected = _selected;
-			//_button.toolTip = _selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
 		}
 	
 		override protected function onMouseOver(e:MouseEvent):void
@@ -116,15 +109,7 @@ package com.babeliumproject.player.controls.babelia
 			} else {
 				selected=true;
 			}
-			
-			
-		}
-		
-		private function showHideSubtitles(e:MouseEvent) : void
-		{
-			_button.toolTip = _button.selected ? resourceManager.getString(ResourceData.PLAYER_RESOURCES,'HIDE_SUBTITLES') : resourceManager.getString(ResourceData.PLAYER_RESOURCES,'SHOW_SUBTITLES');
-				
-			this.dispatchEvent(new SubtitleButtonEvent(SubtitleButtonEvent.STATE_CHANGED, _button.selected));
+			this.dispatchEvent(new SubtitleButtonEvent(SubtitleButtonEvent.STATE_CHANGED, _selected));
 		}
 	}
 }
