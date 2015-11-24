@@ -125,12 +125,14 @@ package com.babeliumproject.player
 			_ppBtn=new PlayButton();
 			_ppBtn.height=26;
 			_ppBtn.width=40;
+			
 			_eTime=new ElapsedTime();
 			_eTime.height=26;
 			_eTime.width=75;
+			
 			_audioSlider=new AudioSlider(_currentVolume / 100); //Audio slider uses fraction values
 			_audioSlider.height=26;
-
+			_audioSlider.width=80;
 			
 			_playerControls.addChild(_ppBtn);
 			_playerControls.addChild(_eTime);
@@ -157,6 +159,7 @@ package com.babeliumproject.player
 			putSkinableComponent(COMPONENT_NAME, this);
 			putSkinableComponent(_playerControls.COMPONENT_NAME, _playerControls);
 			putSkinableComponent(_audioSlider.COMPONENT_NAME, _audioSlider);
+			putSkinableComponent(_audioSlider.muteBtn.COMPONENT_NAME, _audioSlider.muteBtn);
 			putSkinableComponent(_eTime.COMPONENT_NAME, _eTime);
 			putSkinableComponent(_ppBtn.COMPONENT_NAME, _ppBtn);
 			putSkinableComponent(_scrubBar.COMPONENT_NAME, _scrubBar);
