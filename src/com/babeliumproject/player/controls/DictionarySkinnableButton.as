@@ -59,8 +59,15 @@ package com.babeliumproject.player.controls
 			addChild(_iconDisplayHover);
 			
 
+			//Start enabled and in 'Up' state
 			this.buttonMode=true;
 			this.useHandCursor=true;
+			_bgActive.visible=false;
+			_bgHover.visible=false;
+			_bg.visible=true;
+			_iconDisplayHover.visible=false;
+			_iconDisplayActive.visible=false;
+			_iconDisplay.visible=true;
 
 			this.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 			this.addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
@@ -153,6 +160,7 @@ package com.babeliumproject.player.controls
 
 		protected function onClick(e:MouseEvent):void
 		{
+			dispatchEvent(e);
 			return;
 		}
 		

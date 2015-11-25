@@ -289,12 +289,14 @@ package com.babeliumproject.player.controls
 			if (_muted)
 			{
 				dispatchEvent(new VolumeEvent(VolumeEvent.VOLUME_CHANGED, _currentVolume));
+				muteBtn.state=MuteButton.MUTE;
 				_muted=false;
 
 			}
 			else
 			{
 				dispatchEvent(new VolumeEvent(VolumeEvent.VOLUME_CHANGED, 0));
+				muteBtn.state=MuteButton.UNMUTE;
 				_muted=true;
 			}
 			_doingMute=false;
