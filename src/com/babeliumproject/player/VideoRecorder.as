@@ -216,7 +216,8 @@ package com.babeliumproject.player
 			_playerControls.addChild(_subtitleStartEnd);
 
 			_micActivityBar=new MicActivityBar();
-			_micActivityBar.height=22;
+			_micActivityBar.height=60;
+			_micActivityBar.width=60;
 			_micActivityBar.visible=false;
 
 			_micCurrentGain=DEFAULT_MIC_GAIN;
@@ -635,10 +636,15 @@ package com.babeliumproject.player
 		{
 			super.updateDisplayList(unscaledWidth, unscaledHeight);
 			
+			/*
 			var additionalY:Number = _micActivityBar.visible ? _micActivityBar.height : 0;
 			
 			_playerControls.y+=additionalY;
 			_scrubBar.y+=additionalY;
+			*/
+			
+			_micActivityBar.x = _videoWidth - _micActivityBar.width - 10;
+			_micActivityBar.y = 10;
 			
 			_subtitleButton.x=_playerControls.width-_subtitleButton.width;
 			_audioSlider.x=_subtitleButton.y-_audioSlider.width;
@@ -646,10 +652,12 @@ package com.babeliumproject.player
 			_audioSlider.refresh();
 			_subtitleButton.refresh();
 
+			/*
 			_micActivityBar.width=_videoWidth;
 			_micActivityBar.x=_defaultMargin;
 			_micActivityBar.refresh();
 			_micActivityBar.y=_scrubBar.y - _micActivityBar.height;
+			*/
 			
 			if (_subtitleStartEnd.visible)
 			{
@@ -708,10 +716,13 @@ package com.babeliumproject.player
 			 * Recalculate total height
 			 */
 
+			/*
 			_micActivityBar.height=22;
 
 			var h4:Number=_micActivityBar.visible ? _micActivityBar.height : 0;
-
+			*/
+			var h4:Number=0;
+			
 			totalHeight=_videoHeight + h4 + _scrubBar.height + _playerControls.height;
 
 			_bg.graphics.clear();

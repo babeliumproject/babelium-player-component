@@ -160,7 +160,6 @@ package com.babeliumproject.player.controls
 
 		protected function onClick(e:MouseEvent):void
 		{
-			dispatchEvent(e);
 			return;
 		}
 		

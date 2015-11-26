@@ -101,7 +101,7 @@ package com.babeliumproject.player.controls
 				}
 				var type:String=GradientType.LINEAR;
 				var matrix:Matrix=new Matrix();
-				matrix.createGradientBox(width, height, dec2Rad(angle), 0, 0);
+				matrix.createGradientBox(width, height, deg2rad(angle), 0, 0);
 				element.graphics.beginGradientFill(type, colors, alphas, ratios, matrix);
 				
 			} else if (pColor is int) {
@@ -129,7 +129,7 @@ package com.babeliumproject.player.controls
 			drawBackground(_bg);
 		}
 		
-		private function dec2Rad(degrees:Number):Number{
+		protected function deg2rad(degrees:Number):Number{
 			return degrees * Math.PI / 180;
 		}
 
