@@ -144,7 +144,7 @@ package com.babeliumproject.player.controls.babelia
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
 			super.updateDisplayList(unscaledWidth, unscaledHeight);
-
+			
 			inactiveIcon.height=height;
 			inactiveIcon.scaleX=inactiveIcon.scaleY;
 
@@ -170,7 +170,9 @@ package com.babeliumproject.player.controls.babelia
 			var level:Number=_mic.activityLevel ? _mic.activityLevel : 0;
 			var total:Number=activeIcon.height;
 			var nh:Number=Math.round(total * (100 - level) / 100);
-			maskShape.height=nh;
+			if(nh != maskShape.height){
+				maskShape.height=nh;
+			}
 		}
 	}
 }
