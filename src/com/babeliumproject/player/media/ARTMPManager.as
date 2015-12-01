@@ -99,7 +99,7 @@ package com.babeliumproject.player.media
 		{
 			if(!_deferredDisconnect && _ns){
 				logger.info("[{0}] Unpublish {1}", [_id,_streamUrl]);
-				_ns.dispose();
+				_ns.close();
 				_ns.attachAudio(null);
 				_ns.attachCamera(null);
 				//_nc.close();
